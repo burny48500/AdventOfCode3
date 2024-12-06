@@ -16,7 +16,7 @@ public class Reader {
     public long readFile(File inputFile) throws IOException {
         validStrings = new ArrayList<>();
 
-        String regex = "mul\\([0-9]+,[0-9]+\\)";
+        String regex = "mul\\([0-9]+,[0-9]+\\)|do\\(\\)|don\\'t\\(\\)";
 
         Pattern pattern = Pattern.compile(regex);
 
@@ -39,13 +39,29 @@ public class Reader {
 
     private void getNumbers(List<String> strings) {
         intNumbers = new ArrayList<>();
-        String regex2 = "[0-9]+";
-        Pattern pattern = Pattern.compile(regex2);
+        boolean isFlaged = false;
+        String regexNumbers = "[0-9]+";
+        String regexDont = "don\\'t\\(\\)";
+        String regexDo = "do\\(\\)";
+
+        Pattern pattern = Pattern.compile(regexNumbers);
+        Pattern patternDont = Pattern.compile(regexDont);
+        Pattern patternDo = Pattern.compile(regexDo);
 
         for (String string : strings) {
-            Matcher matcher2 = pattern.matcher(string);
-            while (matcher2.find()) {
-                intNumbers.add(Integer.valueOf(matcher2.group()));
+            Matcher matcherNumbers = pattern.matcher(string);
+            Matcher matcherDont = patternDont.matcher(string);
+            Matcher matcherDo = patternDo.matcher(string);
+            if (matcherDont.find()) {
+                isFlaged = true;
+                System.out.println("Flagged");
+            }
+            if (matcherDo.find()) {
+                isFlaged = false;
+                System.out.println("Not Flagged");
+            }
+            while (matcherNumbers.find() && !isFlaged) {
+                intNumbers.add(Integer.valueOf(matcherNumbers.group()));
                 System.out.println(intNumbers.toString());
             }
         }
@@ -59,12 +75,12 @@ public class Reader {
             //Odd
             if(i % 2 != 0){
                 odds.add(numbersList.get(i));
-                System.out.println("Odds");
-                System.out.println(odds.toString());
+                //System.out.println("Odds");
+                //System.out.println(odds.toString());
             } else {
                 evens.add(numbersList.get(i));
-                System.out.println("Evens");
-                System.out.println(evens);
+                //System.out.println("Evens");
+                //System.out.println(evens);
             }
         }
         for (int i = 0; i < odds.size(); i++) {
